@@ -43,33 +43,33 @@ fun QuizzApp(modifier: Modifier = Modifier){
     var currentView by rememberSaveable {mutableIntStateOf(1) }
     var currentScore by rememberSaveable {mutableIntStateOf(0) }
 
-    val onButtonClick:() -> Unit = {
-        if(currentView == 1){
-            currentView++
-        }
-        else if(currentView == 2){
-            currentQuestion ++
-            if(currentQuestion >= TOTAL_QUESTIONS){
-                currentView++
+    fun onButtonClick(){
+        when (currentView){
+            1 -> currentView ++
+            2 -> {
+                currentQuestion++
+                if(currentQuestion >= TOTAL_QUESTIONS){
+                    currentView++
+                }
             }
-        }else if (currentView == 3){
-            currentView = 2
-            currentQuestion = 0
-            currentScore = 0
-        }else{
-            currentView = 1
+            3-> {
+                currentView=2
+                currentQuestion=0
+                currentScore=0
+            }
+            else -> currentView = 1
         }
     }
 
     Box(modifier = modifier) {
         when (currentView) {
-            1 -> WelcomeScreen(onNextClick = onButtonClick)
+            1 -> WelcomeScreen(onNextClick = {onButtonClick()})
             2 -> QuestionsScreen(
                 currentIndex = currentQuestion, score = currentScore,
-                onNextClick = onButtonClick,
+                onNextClick = {onButtonClick()},
                 onCorrect = { currentScore++ })
 
-            3 -> ResultScreen(score = currentScore, onNextClick = onButtonClick)
+            3 -> ResultScreen(score = currentScore, onNextClick = {onButtonClick()})
         }
     }
 }
@@ -141,6 +141,17 @@ fun QuestionsScreen(
     var optionSelected by rememberSaveable { mutableStateOf<String?>(null) }
     val hasAnswered = optionSelected != null
     val scrollState = rememberScrollState()
+
+    fun optionSelection(option: String) {
+        if(!hasAnswered){
+            optionSelected = option
+
+            if(option == currentQuestion.correctAnswer){
+                onCorrect()
+            }
+        }
+    }
+
 //   Column que me expande a todo el espacio de pantalla
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
@@ -186,16 +197,7 @@ fun QuestionsScreen(
             }
 
             Button(
-                onClick = { if (!hasAnswered)
-                {
-                    optionSelected = option
-
-                    if(option == currentQuestion.correctAnswer){
-                        onCorrect()
-                    }
-                }
-
-                          },
+                onClick = {optionSelection(option)},
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonColor,
                     contentColor = colorResource(R.color.white)
