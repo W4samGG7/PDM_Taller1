@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pdm0126.taller1_00097524.data.QuizQuestions
 
 
 const val TOTAL_QUESTIONS = 3
@@ -84,7 +85,7 @@ fun ResultScreen (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "El puntaje final que obtuiste ${score} de ${TOTAL_QUESTIONS} ")
+        Text(text = "El puntaje final que obtuviste ${score} de ${TOTAL_QUESTIONS} ")
 
         Spacer(Modifier.height(12.dp))
 
