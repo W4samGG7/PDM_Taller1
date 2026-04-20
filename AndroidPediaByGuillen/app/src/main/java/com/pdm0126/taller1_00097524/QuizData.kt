@@ -1,6 +1,6 @@
 package com.pdm0126.taller1_00097524
 
-val quizQuestions = listOf(
+val QuizQuestions = listOf(
     Question(
         id = 1,
         question = "¿Que version introdujo Material Design y cual fue el proposito principal?",

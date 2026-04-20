@@ -34,10 +34,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pdm0126.taller1_00097524.R
-import kotlinx.coroutines.selects.select
 
 
+const val TOTAL_QUESTIONS = 3
 @Composable
 fun QuizzApp(modifier: Modifier = Modifier){
     var currentQuestion by rememberSaveable { mutableIntStateOf(0) }
@@ -50,7 +49,7 @@ fun QuizzApp(modifier: Modifier = Modifier){
         }
         else if(currentView == 2){
             currentQuestion ++
-            if(currentQuestion >= 3){
+            if(currentQuestion >= TOTAL_QUESTIONS){
                 currentView++
             }
         }else if (currentView == 3){
@@ -64,19 +63,19 @@ fun QuizzApp(modifier: Modifier = Modifier){
 
     Box(modifier = modifier) {
         when (currentView) {
-            1 -> welcomeScreen(onNextClick = onButtonClick)
-            2 -> questionsScreen(
+            1 -> WelcomeScreen(onNextClick = onButtonClick)
+            2 -> QuestionsScreen(
                 currentIndex = currentQuestion, score = currentScore,
                 onNextClick = onButtonClick,
                 onCorrect = { currentScore++ })
 
-            3 -> resultScreen(score = currentScore, onNextClick = onButtonClick)
+            3 -> ResultScreen(score = currentScore, onNextClick = onButtonClick)
         }
     }
 }
 
 @Composable
-fun resultScreen (
+fun ResultScreen (
     score: Int,
     onNextClick: () -> Unit
 ){
@@ -85,7 +84,7 @@ fun resultScreen (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "El puntaje final que obtuiste ${score} de 3 ")
+        Text(text = "El puntaje final que obtuiste ${score} de ${TOTAL_QUESTIONS} ")
 
         Spacer(Modifier.height(12.dp))
 
@@ -132,14 +131,15 @@ fun resultScreen (
 
 
 @Composable
-fun questionsScreen(
+fun QuestionsScreen(
     currentIndex: Int,
     score: Int,
     onNextClick: () -> Unit,
     onCorrect: () -> Unit
 ){
-    val currentQuestion = quizQuestions[currentIndex]
+    val currentQuestion = QuizQuestions[currentIndex]
     var optionSelected by rememberSaveable { mutableStateOf<String?>(null) }
+    val hasAnswered = optionSelected != null
     val scrollState = rememberScrollState()
 //   Column que me expande a todo el espacio de pantalla
     Column(
@@ -152,8 +152,8 @@ fun questionsScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ){
-            Box(){ Text("Pregunta ${currentIndex + 1} de  3")}
-            Box(){ Text("Puntaje: ${score} / 3 ")}
+            Box(){ Text("Pregunta ${currentIndex + 1} de  ${TOTAL_QUESTIONS}")}
+            Box(){ Text("Puntaje: ${score} / ${TOTAL_QUESTIONS} ")}
         }
         // column para limitar el espacio en pantalla
     Column(
@@ -186,7 +186,7 @@ fun questionsScreen(
             }
 
             Button(
-                onClick = { if (optionSelected == null)
+                onClick = { if (!hasAnswered)
                 {
                     optionSelected = option
 
@@ -208,7 +208,7 @@ fun questionsScreen(
         }
 
         Spacer(Modifier.height(20.dp))
-        if(optionSelected != null) {
+        if(hasAnswered) {
             // Logica de FunFact
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -248,7 +248,7 @@ fun questionsScreen(
                     optionSelected = null
                     onNextClick()
                 },
-                enabled = optionSelected != null
+                enabled = hasAnswered
             ) {
                 Text("Siguiente")
             }
@@ -258,7 +258,7 @@ fun questionsScreen(
 }}
 
 @Composable
-fun welcomeScreen(
+fun WelcomeScreen(
     onNextClick: () -> Unit
 ){
     Column(
@@ -308,20 +308,20 @@ fun welcomeScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun resultScreenPreview(){
-    resultScreen ( score=0, onNextClick = {})
+fun ResultScreenPreview(){
+    ResultScreen ( score=0, onNextClick = {})
 }
 
 @Preview(showBackground = true)
 @Composable
-fun questionsScreenPreview(){
-    questionsScreen( currentIndex = 0, score = 0, onNextClick = {}, onCorrect = {})
+fun QuestionsScreenPreview(){
+    QuestionsScreen( currentIndex = 0, score = 0, onNextClick = {}, onCorrect = {})
 }
 
 @Preview(showBackground = true)
 @Composable
-fun welcomeScreenPreview(){
-    welcomeScreen(onNextClick = {})
+fun WelcomeScreenPreview(){
+    WelcomeScreen(onNextClick = {})
 }
 
 @Preview(showBackground = true)
